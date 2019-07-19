@@ -1,0 +1,46 @@
+package com.usa.his.washingaton.rules
+
+import com.usa.his.washingaton.inputmodel.SnapPlanData
+import com.usa.his.washingaton.outputmodel.PlanApproved
+import com.usa.his.washingaton.outputmodel.PlanDenied
+import com.usa.his.washingaton.outputmodel.PlanInfo
+
+rule "Eligiblelity for geting Plan benfit."
+
+when 
+     snapPlnDataObj:SnapPlanData(Double.parseDouble(familyIncome)<=350.0 && isEmployed.equalsIgnoreCase("Y"))
+     
+
+then 
+      PlanApproved plnApproved=new PlanApproved();
+      
+                  plnApproved.setPlanStartDate("13/07/2019");
+                   plnApproved.setPlanEndDate("20/06/2021");
+                   plnApproved.setBenefitAmt("500");
+                   PlanInfo plnInfo=new PlanInfo();
+		                        plnInfo.setPlanApproved(plnApproved);
+		                        plnInfo.setPlanStatus("AP");
+		                        snapPlnDataObj.setPlnInfo(plnInfo);
+		                        System.out.println("Hellooo...."+plnInfo);
+     
+   end
+   
+  rule "Denyied reason for not apporved plan."       
+   
+   when 
+        snapPlnDataObj:SnapPlanData(Double.parseDouble(familyIncome)>350.0 && isEmployed.equalsIgnoreCase("Y"))
+        
+    then 
+          PlanDenied plnDenied=new PlanDenied(); 
+          plnDenied.setDenialReason("Income is High. Sorry you are not eligible for thid plan.");
+		    PlanInfo plnInfo=new PlanInfo();
+		          plnInfo.setPlanDenied(plnDenied);
+		          plnInfo.setPlanStatus("DE");
+                  snapPlnDataObj.setPlnInfo(plnInfo);
+   
+       end    
+   
+   
+  
+              
+       

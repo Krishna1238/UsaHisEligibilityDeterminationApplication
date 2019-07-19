@@ -1,0 +1,40 @@
+import com.usa.his.washingaton.inputmodel.MedicaidPlanData
+import com.usa.his.washingaton.outputmodel.PlanApproved
+import com.usa.his.washingaton.outputmodel.PlanDenied
+import com.usa.his.washingaton.outputmodel.PlanInfo
+
+
+rule "Plan Eligable for MedicaidPlan"
+
+ when 
+       mediCaidPlanObj:MedicaidPlanData( Double.parseDouble(employmentIncome)<=1000 && Double.parseDouble(otherIncome)<=10000)
+        
+   then      
+        PlanApproved plnApproved=new PlanApproved();
+		                 plnApproved.setPlanStartDate("21/10/2019");
+		                 plnApproved.setPlanEndDate("20/10/2020");
+		                 plnApproved.setBenefitAmt("2000");
+		        PlanInfo plnInfo =new PlanInfo();
+		                 plnInfo.setPlanApproved(plnApproved);
+		                 plnInfo.setPlanStatus("AP");
+		                  mediCaidPlanObj.setPlnInfo(plnInfo);
+		                  
+   end 
+   
+   rule "Plan Denial reason for MedicaidPlan"
+   
+   when 
+   
+   mediCaidPlanObj:MedicaidPlanData( Double.parseDouble(employmentIncome)>1000 && Double.parseDouble(otherIncome)>10000)
+     then 
+     
+      PlanDenied plnDenied=new PlanDenied();
+		 plnDenied.setDenialReason("Yor income is high so you are not eligable for MedicaidPlan ");
+		 PlanInfo plnInfo=new PlanInfo();
+		           plnInfo.setPlanDenied(plnDenied);
+		           plnInfo.setPlanName("MedicaidPlanData");
+		           plnInfo.setPlanStatus("DE");
+		           mediCaidPlanObj.setPlnInfo(plnInfo);
+		 
+       end
+   		                  

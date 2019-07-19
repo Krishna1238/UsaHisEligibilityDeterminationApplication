@@ -1,0 +1,46 @@
+
+import com.usa.his.washingaton.inputmodel.CcapPlanData
+import com.usa.his.washingaton.outputmodel.PlanApproved
+import com.usa.his.washingaton.outputmodel.PlanDenied
+import com.usa.his.washingaton.outputmodel.PlanInfo
+import com.usa.his.washingaton.outputmodel.PlanDenied
+
+rule "Eligibility for Ccap plan for His."
+
+when ccapPlnobj:CcapPlanData(Double.parseDouble(familyIncome)<=400 && parentsEmployed.equalsIgnoreCase("Y") && Integer.parseInt(kidsAge)<=10)
+
+ then 
+   
+    PlanApproved plnApproved=new PlanApproved();
+      
+                  plnApproved.setPlanStartDate("13/07/2019");
+                   plnApproved.setPlanEndDate("20/06/2021");
+                   plnApproved.setBenefitAmt("700");
+                   PlanInfo plnInfo=new PlanInfo();
+		                 plnInfo.setPlanApproved(plnApproved);
+		                 plnInfo.setPlanStatus("AP");
+		                   ccapPlnobj.setPlnInfo(plnInfo);
+		            System.out.println("Ccap Plan data..");            		 
+		                        		 
+		     end  
+		     
+		     
+   rule "Denial reason for Ccap plan"	
+   
+   when 
+        ccapPlnobj:CcapPlanData(Double.parseDouble(familyIncome)>=500 && parentsEmployed.equalsIgnoreCase("Y") && Integer.parseInt(kidsAge)>=15)
+         
+         then
+         
+         PlanDenied plnDenied=new PlanDenied(); 
+          plnDenied.setDenialReason("Income is High. Sorry you are not eligible for thid plan.");
+		    PlanInfo plnInfo=new PlanInfo();
+		          plnInfo.setPlanDenied(plnDenied);
+		          plnInfo.setPlanStatus("DE");
+                    ccapPlnobj.setPlnInfo(plnInfo);
+                    
+               
+            end        
+                    
+                    
+   	                      		 
